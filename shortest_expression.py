@@ -1,13 +1,10 @@
 import argparse
 from dataclasses import dataclass
 
-ALLOWED_NUMBERS = [1, 2, 3, 4, 5, 6]
-ALLOWED_OPERATIONS = ["+", "-", "*"]
+ALLOWED_NUMBERS: list[int]
+ALLOWED_OPERATORS: list[str]
 
 OPERATOR_PRECEDENCE = {
-    "+": 1,
-    "-": 1,
-    "*": 2,
     "_": 5000,  # dummy operator to indicate no operator
 }
 
@@ -22,7 +19,7 @@ class Expression:
 
 def all_combinations(expression_1: Expression, expression_2: Expression) -> list[Expression]:
     combinations = []
-    for operator in ALLOWED_OPERATIONS:
+    for operator in ALLOWED_OPERATORS:
         # only brackets if there are multiple numbers or if the last operator is not the same as the current one
         use_brackets_1 = expression_1.length > 1 and OPERATOR_PRECEDENCE[expression_1.last_operator] < OPERATOR_PRECEDENCE[operator]
         use_brackets_2 = expression_2.length > 1 and OPERATOR_PRECEDENCE[expression_2.last_operator] < OPERATOR_PRECEDENCE[operator]
@@ -59,11 +56,28 @@ def get_shortest_expressions(lower_bound: int, upper_bound: int) -> dict[int, Ex
 
 
 def main():
+    with open("allowed_numbers.txt", "r") as file:
+        global ALLOWED_NUMBERS
+        ALLOWED_NUMBERS = [int(number) for number in file.read().split(",") if number]
+    with open("allowed_operations.txt", "r") as file:
+        global ALLOWED_OPERATORS
+        lines = file.read().splitlines()
+        operator_precedence = 0
+        ALLOWED_OPERATORS = []
+        for operator_precedence, line in enumerate(lines):
+            for operator in line.split(","):
+                operator = operator.strip()
+                OPERATOR_PRECEDENCE[operator] = operator_precedence
+                ALLOWED_OPERATORS.append(operator)
+    print(f"Allowed numbers: {ALLOWED_NUMBERS}")
+    print(f"Allowed operators: {ALLOWED_OPERATORS}")
+
     parser = argparse.ArgumentParser(description="Find the shortest expression for a given number")
     parser.add_argument("number", type=int, help="The number to find the shortest expression for")
     args = parser.parse_args()
     lower_bound = 1
     upper_bound = args.number * 2
+    print(f"Chosen upper bound: {upper_bound}")
     all_shortest_expressions = get_shortest_expressions(lower_bound, upper_bound)
     print(f"{args.number} = {all_shortest_expressions[args.number].expression_string}")
 
