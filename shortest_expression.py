@@ -56,7 +56,7 @@ def get_shortest_expressions(lower_bound: int, upper_bound: int) -> dict[int, Ex
                                 found_expressions[combination.result] = combination
                                 n_found += 1
                             # if the number has been found, update it if the new expression uses less allowed numbers
-                            elif len(combination.allowed_numbers_used) < len(found_expressions[combination.result].allowed_numbers_used):
+                            elif len(combination.allowed_numbers_used) < len(found_expressions[combination.result].allowed_numbers_used) and combination.length < found_expressions[combination.result].length:
                                 found_expressions[combination.result] = combination
                             
         result_length += 1
@@ -84,7 +84,7 @@ def main():
     parser.add_argument("number", type=int, help="The number to find the shortest expression for")
     args = parser.parse_args()
     lower_bound = 1
-    upper_bound = args.number * 2
+    upper_bound = max(ALLOWED_NUMBERS) * args.number
     print(f"Chosen upper bound: {upper_bound}")
     all_shortest_expressions = get_shortest_expressions(lower_bound, upper_bound)
     print(f"{args.number} = {all_shortest_expressions[args.number].expression_string}")
