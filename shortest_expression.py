@@ -1,6 +1,8 @@
 import argparse
 from dataclasses import dataclass
 
+from tqdm import tqdm
+
 ALLOWED_NUMBERS: list[int]
 ALLOWED_OPERATORS: list[str]
 
@@ -42,7 +44,9 @@ def get_shortest_expressions(lower_bound: int, upper_bound: int) -> dict[int, Ex
     found_expressions: dict[int, Expression] = {}
     n_found = len(ALLOWED_NUMBERS)
     result_length = 2
+    progress_bar = tqdm(total=upper_bound - lower_bound + 1)
     while n_found < upper_bound - lower_bound + 1:
+        progress_bar.set_description(f"Computing expressions of length {result_length}")
         expressions_of_length[result_length] = []
         for length_1 in range(1, result_length):
             length_2 = result_length - length_1
@@ -55,11 +59,13 @@ def get_shortest_expressions(lower_bound: int, upper_bound: int) -> dict[int, Ex
                                 expressions_of_length[result_length].append(combination)
                                 found_expressions[combination.result] = combination
                                 n_found += 1
+                                progress_bar.update()
                             # if the number has been found, update it if the new expression uses less allowed numbers
                             elif len(combination.allowed_numbers_used) < len(found_expressions[combination.result].allowed_numbers_used) and combination.length < found_expressions[combination.result].length:
                                 found_expressions[combination.result] = combination
-                            
+
         result_length += 1
+    progress_bar.close()
     return found_expressions
 
 
