@@ -35,7 +35,7 @@ def all_combinations(expression_1: Expression, expression_2: Expression) -> list
     return combinations
 
 
-def get_shortest_expressions(lower_bound: int, upper_bound: int) -> dict[int, Expression]:
+def get_shortest_expressions(lower_bound: int, upper_bound: int, wanted_number: int) -> dict[int, Expression]:
     # length -> expressions of that length
     expressions_of_length: dict[int, list[Expression]] = {}
     expressions_of_length[1] = [Expression(allowed_number, str(allowed_number), 1, "_", {allowed_number}) for allowed_number in ALLOWED_NUMBERS]
@@ -46,6 +46,10 @@ def get_shortest_expressions(lower_bound: int, upper_bound: int) -> dict[int, Ex
     result_length = 2
     progress_bar = tqdm(total=upper_bound - lower_bound + 1)
     while n_found < upper_bound - lower_bound + 1:
+        # if we were to raise the result length, we would only find longer expressions than the one we already found
+        if wanted_number in found_expressions:
+            progress_bar.close()
+            return found_expressions
         progress_bar.set_description(f"Computing expressions of length {result_length}")
         expressions_of_length[result_length] = []
         for length_1 in range(1, result_length):
@@ -92,7 +96,7 @@ def main():
     lower_bound = 1
     upper_bound = max(ALLOWED_NUMBERS) * args.number
     print(f"Chosen upper bound: {upper_bound}")
-    all_shortest_expressions = get_shortest_expressions(lower_bound, upper_bound)
+    all_shortest_expressions = get_shortest_expressions(lower_bound, upper_bound, args.number)
     print(f"{args.number} = {all_shortest_expressions[args.number].expression_string}")
 
 
