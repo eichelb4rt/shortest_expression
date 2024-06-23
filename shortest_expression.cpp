@@ -85,11 +85,11 @@ std::string expression_to_string(const Expression* expression) {
     if (expression->operation == -1) {
         return std::to_string(expression->value);
     }
-    bool use_brackets_left = (expression->left->operation != -1 && OPERATOR_PRECEDENCE[expression->left->operation] < OPERATOR_PRECEDENCE[expression->operation]) || expression->operation == 4;
-    bool use_brackets_right = (expression->right->operation != -1 && OPERATOR_PRECEDENCE[expression->right->operation] < OPERATOR_PRECEDENCE[expression->operation]) || expression->operation == 4;
+    bool use_brackets_left = (expression->left->operation != -1 && OPERATOR_PRECEDENCE[expression->left->operation] < OPERATOR_PRECEDENCE[expression->operation]) || expression->operation == 3;
+    bool use_brackets_right = (expression->right->operation != -1 && OPERATOR_PRECEDENCE[expression->right->operation] < OPERATOR_PRECEDENCE[expression->operation]) || expression->operation == 3;
     if (use_brackets_left) {
         if (use_brackets_right) {
-            return "(" + expression_to_string(expression->left) + ")" + " " + OPERATOR_SYMBOLS[expression->operation] + " " + expression_to_string(expression->right) + ")";
+            return "(" + expression_to_string(expression->left) + ")" + " " + OPERATOR_SYMBOLS[expression->operation] + " " + "(" + expression_to_string(expression->right) + ")";
         }
         return "(" + expression_to_string(expression->left) + ")" + " " + OPERATOR_SYMBOLS[expression->operation] + " " + expression_to_string(expression->right);
     } else if (use_brackets_right) {
