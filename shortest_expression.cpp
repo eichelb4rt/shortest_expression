@@ -7,7 +7,7 @@
 
 
 constexpr std::array<const char*, 6> OPERATOR_SYMBOLS = { "+", "-", "*", "//", "%", "**" };
-constexpr std::array<int, 6> OPERATOR_PRECEDENCE = { 0, 0, 1, 1, 2, 3 };
+constexpr std::array<int, 6> OPERATOR_PRECEDENCE = { 0, 0, 1, 2, 3, 4 };
 
 
 struct Expression {
@@ -85,8 +85,8 @@ std::string expression_to_string(const Expression* expression) {
     if (expression->operation == -1) {
         return std::to_string(expression->value);
     }
-    bool use_brackets_left = (expression->left->operation != -1 && OPERATOR_PRECEDENCE[expression->left->operation] < OPERATOR_PRECEDENCE[expression->operation]) || expression->operation == 3;
-    bool use_brackets_right = (expression->right->operation != -1 && OPERATOR_PRECEDENCE[expression->right->operation] < OPERATOR_PRECEDENCE[expression->operation]) || expression->operation == 3;
+    bool use_brackets_left = expression->left->operation != -1 && OPERATOR_PRECEDENCE[expression->left->operation] < OPERATOR_PRECEDENCE[expression->operation];
+    bool use_brackets_right = expression->right->operation != -1 && OPERATOR_PRECEDENCE[expression->right->operation] < OPERATOR_PRECEDENCE[expression->operation];
     if (use_brackets_left) {
         if (use_brackets_right) {
             return "(" + expression_to_string(expression->left) + ")" + " " + OPERATOR_SYMBOLS[expression->operation] + " " + "(" + expression_to_string(expression->right) + ")";
