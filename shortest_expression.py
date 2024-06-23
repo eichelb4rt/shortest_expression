@@ -24,7 +24,7 @@ def all_combinations(expression_1: Expression, expression_2: Expression) -> list
     combinations = []
     for operator in ALLOWED_OPERATORS:
         # only brackets if there are multiple numbers or if the last operator is not the same as the current one
-        use_brackets_1 = expression_1.length > 1 and OPERATOR_PRECEDENCE[expression_1.last_operator] < OPERATOR_PRECEDENCE[operator]
+        use_brackets_1 = (expression_1.length > 1 and OPERATOR_PRECEDENCE[expression_1.last_operator] < OPERATOR_PRECEDENCE[operator]) or operator == "//"
         use_brackets_2 = expression_2.length > 1 and OPERATOR_PRECEDENCE[expression_2.last_operator] < OPERATOR_PRECEDENCE[operator]
         expression_1_str = f"({expression_1.expression_string})" if use_brackets_1 else expression_1.expression_string
         expression_2_str = f"({expression_2.expression_string})" if use_brackets_2 else expression_2.expression_string
@@ -52,6 +52,8 @@ def get_shortest_expressions(lower_bound: int, upper_bound: int, wanted_number: 
             return found_expressions
         progress_bar.set_description(f"Computing expressions of length {result_length}")
         expressions_of_length[result_length] = []
+        # compute all the expressions with length result_length:
+        # for each expression_1 with 1 <= length_1 < result_length and expression_2 with length_2 = result_length - length_1, combine them into an expression of length_1 + length_2 (= result_length)
         for length_1 in range(1, result_length):
             length_2 = result_length - length_1
             for expression_1 in expressions_of_length[length_1]:

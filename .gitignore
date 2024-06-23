@@ -1,0 +1,11 @@
+# IDE
+.vscode
+
+# cython
+*.so
+build/
+shortest_expression_interface.cpp
+
+# venv
+.autoenv
+.autoenv.leave
